@@ -8,6 +8,7 @@ module Lib where
 import Control.Applicative
 import Control.Monad
 import Control.Monad.IO.Class
+import Control.Monad.Trans.Except
 import Data.Aeson
 import Data.Monoid
 import Data.Proxy
@@ -19,7 +20,7 @@ import Servant.API
 import Servant.Client
 
 type OuraAPI =
-    "userinfo" :> Get '[JSON] [UserInfo]
+    "v1/userinfo" :> Get '[JSON] [UserInfo]
 
 type Email = Text
 
@@ -45,3 +46,9 @@ instance FromJSON UserInfo where
             <*> o .: "gender"
             <*> o .: "email"
     parseJSON _ = mzero
+
+ouraAPI :: Proxy OuraAPI
+ouraAPI = Proxy
+
+getUserInfo :: ClientM UserInfo
+getUserInfo = client ouraAPI
